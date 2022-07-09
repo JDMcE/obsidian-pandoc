@@ -227,14 +227,14 @@ async function postProcessRenderedHTML(plugin: PandocPlugin, inputFile: string, 
     // Fix <img src="app://obsidian.md/image.png">
     // Note: this will throw errors when Obsidian tries to load images with a (now invalid) src
     // These errors can be safely ignored
-    if (outputFormat !== 'html') {
-        for (let img of Array.from(wrapper.querySelectorAll('img'))) {
-            if (img.src.startsWith(prefix) && img.getAttribute('data-touched') !== 'true') {
-                img.src = adapter.getFullPath(img.src.substring(prefix.length));
-                img.setAttribute('data-touched', 'true');
-            }
-        }
-    }
+    // if (outputFormat !== 'html') {
+    //     for (let img of Array.from(wrapper.querySelectorAll('img'))) {
+    //         if (img.src.startsWith(prefix) && img.getAttribute('data-touched') !== 'true') {
+    //             img.src = adapter.getFullPath(img.src.substring(prefix.length));
+    //             img.setAttribute('data-touched', 'true');
+    //         }
+    //     }
+    // }
     // Remove YAML frontmatter from the output if desired
     if (!settings.displayYAMLFrontmatter) {
         Array.from(wrapper.querySelectorAll('.frontmatter, .frontmatter-container'))

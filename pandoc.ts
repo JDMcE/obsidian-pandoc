@@ -36,7 +36,7 @@ export const inputExtensions = ['md', 'docx', 'csv', 'html', 'tex', 'odt'];
 // Subset of output formats, will add more later
 // Note: you need a `-o -` in the command to output odt, docx, epub or pdf output (presumably as they are binary formats or something)
 export type OutputFormat = 'asciidoc' | 'beamer' | 'commonmark_x' | 'docx' | 'epub'
-  | 'html' | 'pdf' | 'json' | 'latex' | 'odt' | 'pptx' | 'revealjs'
+  | 'html' | 'gfm' | 'pdf' | 'json' | 'latex' | 'odt' | 'pptx' | 'revealjs'
   | 'beamer' | 'rtf' | 'docuwiki' | 'mediawiki';
 
 // List of [pretty name, pandoc format name, file extension, shortened pretty name]
@@ -44,6 +44,7 @@ export const outputFormats = [
     ['AsciiDoc (adoc)', 'asciidoc', 'adoc', 'AsciiDoc'],
     ['Word Document (docx)', 'docx', 'docx', 'Word'],
     ['Pandoc Markdown', 'markdown', 'pandoc.md', 'markdown'],  // X.md -> X.pandoc.md to avoid conflict
+    ['GitHub Markdown', 'gfm', 'gfm.md', 'gfmarkdown'],  // X.md -> X.gfm.md to avoid conflict
     ['HTML (without Pandoc)','html','html', 'HTML'],
     ['LaTeX', 'latex', 'tex', 'LaTeX'],
     ['OpenDocument (odt)', 'odt', 'odt', 'OpenDocument'],
@@ -64,6 +65,7 @@ export interface PandocInput {
     metadataFile?: string,  // path to YAML file
     pandoc?: string, // optional path to Pandoc if it's not in the current PATH variable
     pdflatex?: string, // ditto for pdflatex
+    directory: AbsoluteFilePath, // The directory the source file is in
 }
 
 export interface PandocOutput {
@@ -158,7 +160,7 @@ export const pandoc = async (input: PandocInput, output: PandocOutput, extraPara
                 env.PATH += ":";
             env.PATH += path.dirname(input.pdflatex);
         }
-        pandoc = spawn(input.pandoc || 'pandoc', args, { env: process.env });
+        pandoc = spawn(input.pandoc || 'pandoc', args, { env: process.env, cwd: input.directory });
 
         if (stdin) {
             // TODO: strip some unicode characters but not others
